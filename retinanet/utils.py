@@ -121,7 +121,7 @@ class BBoxTransform(nn.Module):
         pred_boxes_x2 = pred_ctr_x + 0.5 * pred_w
         pred_boxes_y2 = pred_ctr_y + 0.5 * pred_h
 
-        pred_boxes = torch.stack([pred_boxes_x1, pred_boxes_y1, pred_boxes_x2, pred_boxes_y2], dim=2)
+        pred_boxes = torch.stack([pred_boxes_x1, pred_boxes_y1, pred_boxes_x2, pred_boxes_y2], dim=2).cuda()
 
         return pred_boxes
 
@@ -141,4 +141,4 @@ class ClipBoxes(nn.Module):
         boxes[:, :, 2] = torch.clamp(boxes[:, :, 2], max=width)
         boxes[:, :, 3] = torch.clamp(boxes[:, :, 3], max=height)
       
-        return boxes
+        return boxes.cuda()

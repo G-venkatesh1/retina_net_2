@@ -70,7 +70,7 @@ def generate_anchors(base_size=16, ratios=None, scales=None):
     anchors[:, 0::2] -= np.tile(anchors[:, 2] * 0.5, (2, 1)).T
     anchors[:, 1::2] -= np.tile(anchors[:, 3] * 0.5, (2, 1)).T
 
-    return anchors.cuda()
+    return anchors
 
 def compute_shape(image_shape, pyramid_levels):
     """Compute shapes based on pyramid levels.
