@@ -19,7 +19,7 @@ def evaluate_coco_onnx(dataset, ort_session, threshold=0.05):
             # run network
             if torch.cuda.is_available():
                 inputs = data['img'].permute(2, 0, 1).float().unsqueeze(dim=0)
-                ort_inputs['input'] = inputs.cpu().numpy()
+                ort_inputs['input.1'] = inputs.cpu().numpy()
                 ort_outs = ort_session.run(None, ort_inputs)
                 scores, labels, boxes = ort_outs[0], ort_outs[1], ort_outs[2]
             # else:
