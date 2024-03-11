@@ -262,7 +262,7 @@ class ResNet(nn.Module):
             finalResult = [[], [], []]
 
             finalScores = torch.Tensor([])
-            finalAnchorBoxesIndexes = torch.Tensor([]).long()
+            finalAnchorBoxesIndexes = torch.Tensor([])#.long()
             finalAnchorBoxesCoordinates = torch.Tensor([])
 
             if torch.cuda.is_available():
