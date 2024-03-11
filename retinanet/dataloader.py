@@ -340,8 +340,8 @@ class Resizer(object):
     """Convert ndarrays in sample to Tensors."""
 
     def __call__(self, sample, min_side=608, max_side=1024):
-        min_side = 608 if min_side < 608 else min_side
-        max_side = 1024 if max_side > 1024 else max_side
+        # min_side = 608 if min_side < 608 else min_side
+        # max_side = 1024 if max_side > 1024 else max_side
         
         image, annots = sample['img'], sample['annot']
 
