@@ -11,7 +11,7 @@ def main(args=None):
     retinanet.load_state_dict(torch.load(model_path))
     example_input = torch.randn(1, 3,640,640).cuda()
     onnx_path = "ret_new.onnx"
-    torch.onnx.export(retinanet,example_input,onnx_path,opset_version=13)                              # model being run
+    torch.onnx.export(retinanet,example_input,onnx_path,opset_version=15)                              # model being run
     ort_session = onnxruntime.InferenceSession('/kaggle/working/retina_net_2/ret_new.onnx')
     ort_inputs = {' input.1': None}
     dataset_val = CocoDataset('/kaggle/input/coco-2017-dataset/coco2017', set_name='val2017',
