@@ -44,7 +44,7 @@ def main(args=None):
     retinanet.module.freeze_bn()
 
     # coco_eval.evaluate_coco(dataset_val, retinanet)
-    ort_session = onnxruntime.InferenceSession('/kaggle/working/retina_net_2/ret.onnx')
+    ort_session = onnxruntime.InferenceSession('/kaggle/working/retina_net_2/ret2.onnx')
     coco_onnx_eval.evaluate_coco_onnx(dataset_val,ort_session)
 
 if __name__ == '__main__':
