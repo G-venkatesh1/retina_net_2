@@ -15,7 +15,7 @@ def main(args=None):
     ort_session = onnxruntime.InferenceSession('/kaggle/working/retina_net_2/ret.onnx')
     ort_inputs = {' input.1': None}
     dataset_val = CocoDataset('/kaggle/input/coco-2017-dataset/coco2017', set_name='val2017',
-                              transform=transforms.Compose([Normalizer(), Resizer_const()])) 
+                              transform=transforms.Compose([Normalizer(), Resizer()])) 
     data = dataset_val[0]
     inputs = data['img'].permute(2, 0, 1).float().unsqueeze(dim=0)
     ort_inputs['input.1'] = inputs.cpu().numpy()
