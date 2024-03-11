@@ -12,11 +12,12 @@ def evaluate_coco(dataset, model, threshold=0.05):
         # start collecting results
         results = []
         image_ids = []
-
+        c=0
         for index in range(len(dataset)):
             data = dataset[index]
             scale = data['scale']
-
+            if(c>15): break
+            c=c+1
             # run network
             if torch.cuda.is_available():
                 scores, labels, boxes = model(data['img'].permute(2, 0, 1).cuda().float().unsqueeze(dim=0))
@@ -28,7 +29,7 @@ def evaluate_coco(dataset, model, threshold=0.05):
 
             # correct boxes for image scale
             boxes /= scale
-
+            print(scores.shape,labels.shape,boxes.shape)
             if boxes.shape[0] > 0:
                 # change to (x, y, w, h) (MS COCO standard)
                 boxes[:, 2] -= boxes[:, 0]
@@ -79,6 +80,6 @@ def evaluate_coco(dataset, model, threshold=0.05):
         coco_eval.accumulate()
         coco_eval.summarize()
 
-        model.train()
+        # model.train()
 
         return
