@@ -1,10 +1,11 @@
 import argparse
 import torch
 from torchvision import transforms
-
+import onnx
+import onnxruntime
 from retinanet import model
 from retinanet.dataloader import CocoDataset, Resizer, Normalizer,Resizer_const
-from retinanet import coco_eval
+from retinanet import coco_eval,coco_onnx_eval
 
 # assert torch.__version__.split('.')[0] == '1'
 
@@ -42,8 +43,9 @@ def main(args=None):
     retinanet.eval()
     retinanet.module.freeze_bn()
 
-    coco_eval.evaluate_coco(dataset_val, retinanet)
-
+    # coco_eval.evaluate_coco(dataset_val, retinanet)
+    ort_session = onnxruntime.InferenceSession('/kaggle/working/retina_net_2/ret.onnx')
+    coco_onnx_eval.evaluate_coco_onnx(dataset_val,ort_session)
 
 if __name__ == '__main__':
     main()
