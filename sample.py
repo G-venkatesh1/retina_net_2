@@ -27,6 +27,12 @@ def main(args=None):
     ort_inputs['input.1'] = inputs.cpu().numpy()
     ort_outs = ort_session.run(None, ort_inputs)
     scores, labels, boxes = ort_outs[0], ort_outs[1], ort_outs[2] 
+    print(scores.shape,labels.shape,boxes.shape)
+    data2 = dataset_val[2]
+    inputs = data2['img'].permute(2, 0, 1).float().unsqueeze(dim=0)
+    ort_inputs['input.1'] = inputs.cpu().numpy()
+    ort_outs = ort_session.run(None, ort_inputs)
+    scores, labels, boxes = ort_outs[0], ort_outs[1], ort_outs[2] 
     print(scores.shape,labels.shape,boxes.shape)   
     
     
