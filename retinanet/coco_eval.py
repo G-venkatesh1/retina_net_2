@@ -14,6 +14,7 @@ def evaluate_coco(dataset, model, threshold=0.05):
         image_ids = []
         c=0
         for index in range(len(dataset)):
+            
             data = dataset[index]
             scale = data['scale']
             if(c>15): break
