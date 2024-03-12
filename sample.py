@@ -13,7 +13,7 @@ def main(args=None):
     onnx_path = "ret_new.onnx"
     torch.onnx.export(retinanet,example_input,onnx_path,opset_version=15)                              # model being run
     ort_session = onnxruntime.InferenceSession('/kaggle/working/retina_net_2/ret_new.onnx')
-    ort_inputs = {' input.1': None}
+    ort_inputs = {'input.1': None}
     dataset_val = CocoDataset('/kaggle/input/coco-2017-dataset/coco2017', set_name='val2017',
                               transform=transforms.Compose([Normalizer(), Resizer_const()])) 
     data = dataset_val[0]
