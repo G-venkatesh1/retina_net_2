@@ -281,7 +281,10 @@ class ResNet(nn.Module):
                 anchorBoxes = anchorBoxes[scores_over_thresh]
                 anchors_nms_idx = nms(anchorBoxes, scores, 0.5)
                 val =torch.tensor(anchors_nms_idx)
+                val2 = torch.tensor([i] * anchors_nms_idx.shape[0])
                 print(val)
+                print("\n")
+                print(val2)
                 print("\n")
                 finalResult[0].extend(scores[anchors_nms_idx])
                 # finalResult[1].extend(val)
