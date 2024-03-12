@@ -253,53 +253,55 @@ class ResNet(nn.Module):
 
         anchors = self.anchors(img_batch)
 
-        # if self.training:
-        #     return self.focalLoss(classification, regression, anchors, annotations)
-        # else:
-        transformed_anchors = self.regressBoxes(anchors, regression)
-        transformed_anchors = self.clipBoxes(transformed_anchors, img_batch)
+        if self.training:
+            print("IM IN TRAINING")
+            return self.focalLoss(classification, regression, anchors, annotations)
+        else:
+            print("im in anchor")
+            transformed_anchors = self.regressBoxes(anchors, regression)
+            transformed_anchors = self.clipBoxes(transformed_anchors, img_batch)
 
-        finalResult = [[], [], []]
-        finalScores = torch.Tensor([])
-        finalAnchorBoxesIndexes = torch.Tensor([])#.long()
-        finalAnchorBoxesCoordinates = torch.Tensor([])
+            finalResult = [[], [], []]
+            finalScores = torch.Tensor([])
+            finalAnchorBoxesIndexes = torch.Tensor([])#.long()
+            finalAnchorBoxesCoordinates = torch.Tensor([])
 
-        if torch.cuda.is_available():
-            finalScores = finalScores.cuda()
-            finalAnchorBoxesIndexes = finalAnchorBoxesIndexes.cuda()
-            finalAnchorBoxesCoordinates = finalAnchorBoxesCoordinates.cuda()
+            if torch.cuda.is_available():
+                finalScores = finalScores.cuda()
+                finalAnchorBoxesIndexes = finalAnchorBoxesIndexes.cuda()
+                finalAnchorBoxesCoordinates = finalAnchorBoxesCoordinates.cuda()
 
-        for i in range(classification.shape[2]):
-            scores = torch.squeeze(classification[:, :, i])
-            scores_over_thresh = (scores > 0.05)
-            if scores_over_thresh.sum() == 0:
-                    # no boxes to NMS, just continue
-                continue
+            for i in range(classification.shape[2]):
+                scores = torch.squeeze(classification[:, :, i])
+                scores_over_thresh = (scores > 0.05)
+                if scores_over_thresh.sum() == 0:
+                        # no boxes to NMS, just continue
+                    continue
 
-            scores = scores[scores_over_thresh]
-            anchorBoxes = torch.squeeze(transformed_anchors)
-            anchorBoxes = anchorBoxes[scores_over_thresh]
-            anchors_nms_idx = nms(anchorBoxes, scores, 0.5)
-                # val =torch.tensor(anchors_nms_idx)
-                # val2 = torch.tensor([i] * anchors_nms_idx.shape[0])
-                # print(val)
-                # print("\n")
-                # print(val2)
-                # print("\n")
-            finalResult[0].extend(scores[anchors_nms_idx])
-                # finalResult[1].extend(val)
-            finalResult[1].extend(torch.tensor([i] * anchors_nms_idx.shape[0]))
-                #print(finalResult[1])
-            finalResult[2].extend(anchorBoxes[anchors_nms_idx])
+                scores = scores[scores_over_thresh]
+                anchorBoxes = torch.squeeze(transformed_anchors)
+                anchorBoxes = anchorBoxes[scores_over_thresh]
+                anchors_nms_idx = nms(anchorBoxes, scores, 0.5)
+                    # val =torch.tensor(anchors_nms_idx)
+                    # val2 = torch.tensor([i] * anchors_nms_idx.shape[0])
+                    # print(val)
+                    # print("\n")
+                    # print(val2)
+                    # print("\n")
+                finalResult[0].extend(scores[anchors_nms_idx])
+                    # finalResult[1].extend(val)
+                finalResult[1].extend(torch.tensor([i] * anchors_nms_idx.shape[0]))
+                    #print(finalResult[1])
+                finalResult[2].extend(anchorBoxes[anchors_nms_idx])
 
-                #  finalAnchorBoxesIndexesValue = val.cuda()
-            finalAnchorBoxesIndexesValue = torch.tensor([i] * anchors_nms_idx.shape[0]).cuda()
-                # if torch.cuda.is_available():
-                #     finalAnchorBoxesIndexesValue = finalAnchorBoxesIndexesValue.cuda()
+                    #  finalAnchorBoxesIndexesValue = val.cuda()
+                finalAnchorBoxesIndexesValue = torch.tensor([i] * anchors_nms_idx.shape[0]).cuda()
+                    # if torch.cuda.is_available():
+                    #     finalAnchorBoxesIndexesValue = finalAnchorBoxesIndexesValue.cuda()
 
-            finalAnchorBoxesIndexes = torch.cat((finalAnchorBoxesIndexes, finalAnchorBoxesIndexesValue)).cuda()
-            finalAnchorBoxesCoordinates = torch.cat((finalAnchorBoxesCoordinates, anchorBoxes[anchors_nms_idx])).cuda()
-            finalScores = torch.cat((finalScores, scores[anchors_nms_idx])).cuda()
+                finalAnchorBoxesIndexes = torch.cat((finalAnchorBoxesIndexes, finalAnchorBoxesIndexesValue)).cuda()
+                finalAnchorBoxesCoordinates = torch.cat((finalAnchorBoxesCoordinates, anchorBoxes[anchors_nms_idx])).cuda()
+                finalScores = torch.cat((finalScores, scores[anchors_nms_idx])).cuda()
         return [finalScores, finalAnchorBoxesIndexes, finalAnchorBoxesCoordinates]
 
 
