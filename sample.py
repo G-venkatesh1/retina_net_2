@@ -10,7 +10,7 @@ def main(args=None):
     retinanet = model.resnet50(num_classes=80, pretrained=True).cuda()
     retinanet.load_state_dict(torch.load(model_path))
     example_input = torch.randn(1, 3,1024,1024).cuda()
-    onnx_path = "ret_new.onnx"
+    onnx_path = "ret_new_1.onnx"
     torch.onnx.export(retinanet,example_input,onnx_path,opset_version=15) 
     # model being run
     # ort_session = onnxruntime.InferenceSession('/kaggle/working/retina_net_2/ret_new.onnx')
