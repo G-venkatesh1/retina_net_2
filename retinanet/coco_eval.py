@@ -42,19 +42,19 @@ def evaluate_coco(dataset, model, threshold=0.05):
                     finalAnchorBoxesIndexes = torch.cat((finalAnchorBoxesIndexes, finalAnchorBoxesIndexesValue))
                     finalAnchorBoxesCoordinates = torch.cat((finalAnchorBoxesCoordinates, anchorBoxes[anchors_nms_idx]))
                     finalScores = torch.cat((finalScores, scores[anchors_nms_idx])).cuda()
-                    scores,labels,boxes = finalScores,finalAnchorBoxesIndexes, finalAnchorBoxesCoordinates
-                    boxes /= scale
-                    if boxes.shape[0] > 0:
+                    # scores,labels,boxes = finalScores,finalAnchorBoxesIndexes, finalAnchorBoxesCoordinates
+                    finalAnchorBoxesCoordinates /= scale
+                    if finalAnchorBoxesCoordinates.shape[0] > 0:
                         # change to (x, y, w, h) (MS COCO standard)
-                        boxes[:, 2] -= boxes[:, 0]
-                        boxes[:, 3] -= boxes[:, 1]
+                        finalAnchorBoxesCoordinates[:, 2] -= finalAnchorBoxesCoordinates[:, 0]
+                        finalAnchorBoxesCoordinates[:, 3] -= finalAnchorBoxesCoordinates[:, 1]
 
                         # compute predicted labels and scores
                         #for box, score, label in zip(boxes[0], scores[0], labels[0]):
-                        for box_id in range(boxes.shape[0]):
-                            score = float(scores[box_id])
-                            label = int(labels[box_id])
-                            box = boxes[box_id, :]
+                        for box_id in range(finalAnchorBoxesCoordinates.shape[0]):
+                            score = float(finalScores[box_id])
+                            label = int(finalAnchorBoxesIndexes[box_id])
+                            box = finalAnchorBoxesCoordinates[box_id, :]
 
                             # scores are sorted, so we can break
                             if score < threshold:
@@ -72,10 +72,10 @@ def evaluate_coco(dataset, model, threshold=0.05):
                             results.append(image_result)
 
                     # append image to list of processed images
-                    image_ids.append(dataset.image_ids[index])
+            image_ids.append(dataset.image_ids[index])
 
                     # print progress
-                    print('{}/{}'.format(index, len(dataset)), end='\r')
+            print('{}/{}'.format(index, len(dataset)), end='\r')
 
         if not len(results):
             return
