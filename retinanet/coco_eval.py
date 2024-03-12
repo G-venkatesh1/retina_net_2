@@ -4,34 +4,26 @@ import torch
 from torchvision.ops import nms
 
 def evaluate_coco(dataset, model, threshold=0.05):
-    
     model.eval()
-    
     with torch.no_grad():
-
-        # start collecting results
         results = []
         image_ids = []
         c=0
         for index in range(len(dataset)):
-            
             data = dataset[index]
             scale = data['scale']
             if(c>15): break
             c=c+1
-            # run network
             if torch.cuda.is_available():
                 transformed_anchors,classification = model(data['img'].permute(2, 0, 1).cuda().float().unsqueeze(dim=0))
                 finalResult = [[], [], []]
                 finalScores = torch.Tensor([])
-                finalAnchorBoxesIndexes = torch.Tensor([])#.long()
+                finalAnchorBoxesIndexes = torch.Tensor([]).long()
                 finalAnchorBoxesCoordinates = torch.Tensor([])
-
                 if torch.cuda.is_available():
                     finalScores = finalScores.cuda()
                     finalAnchorBoxesIndexes = finalAnchorBoxesIndexes.cuda()
                     finalAnchorBoxesCoordinates = finalAnchorBoxesCoordinates.cuda()
-
                 for i in range(classification.shape[2]):
                     scores = torch.squeeze(classification[:, :, i])
                     scores_over_thresh = (scores > 0.05)
@@ -43,38 +35,15 @@ def evaluate_coco(dataset, model, threshold=0.05):
                     anchorBoxes = torch.squeeze(transformed_anchors)
                     anchorBoxes = anchorBoxes[scores_over_thresh]
                     anchors_nms_idx = nms(anchorBoxes, scores, 0.5)
-                        # val =torch.tensor(anchors_nms_idx)
-                        # val2 = torch.tensor([i] * anchors_nms_idx.shape[0])
-                        # print(val)
-                        # print("\n")
-                        # print(val2)
-                        # print("\n")
                     finalResult[0].extend(scores[anchors_nms_idx])
-                        # finalResult[1].extend(val)
                     finalResult[1].extend(torch.tensor([i] * anchors_nms_idx.shape[0]))
-                        #print(finalResult[1])
                     finalResult[2].extend(anchorBoxes[anchors_nms_idx])
-
-                        #  finalAnchorBoxesIndexesValue = val.cuda()
-                    finalAnchorBoxesIndexesValue = torch.tensor([i] * anchors_nms_idx.shape[0]).cuda()
-                        # if torch.cuda.is_available():
-                        #     finalAnchorBoxesIndexesValue = finalAnchorBoxesIndexesValue.cuda()
-
-                    finalAnchorBoxesIndexes = torch.cat((finalAnchorBoxesIndexes, finalAnchorBoxesIndexesValue)).cuda()
-                    finalAnchorBoxesCoordinates = torch.cat((finalAnchorBoxesCoordinates, anchorBoxes[anchors_nms_idx])).cuda()
-        #         # print("values in mode.py",finalScores,finalAnchorBoxesIndexes, finalAnchorBoxesCoordinates)
+                    finalAnchorBoxesIndexesValue = torch.tensor([i] * anchors_nms_idx.shape[0])
+                    finalAnchorBoxesIndexes = torch.cat((finalAnchorBoxesIndexes, finalAnchorBoxesIndexesValue))
+                    finalAnchorBoxesCoordinates = torch.cat((finalAnchorBoxesCoordinates, anchorBoxes[anchors_nms_idx]))
                     finalScores = torch.cat((finalScores, scores[anchors_nms_idx])).cuda()
                     scores,labels,boxes = finalScores,finalAnchorBoxesIndexes, finalAnchorBoxesCoordinates
-                # print("printing in main",scores,labels,boxes)
-            # else:
-                # scores, labels, boxes = model(data['img'].permute(2, 0, 1).float().unsqueeze(dim=0))
-                    scores = scores.cpu()
-                    labels = labels.cpu()
-                    boxes  = boxes.cpu()
-
-                    # correct boxes for image scale
                     boxes /= scale
-                    # print(scores.shape,labels.shape,boxes.shape)
                     if boxes.shape[0] > 0:
                         # change to (x, y, w, h) (MS COCO standard)
                         boxes[:, 2] -= boxes[:, 0]
@@ -108,8 +77,8 @@ def evaluate_coco(dataset, model, threshold=0.05):
                     # print progress
                     print('{}/{}'.format(index, len(dataset)), end='\r')
 
-                if not len(results):
-                    return
+        if not len(results):
+            return
 
                 # write output
         json.dump(results, open('{}_bbox_results.json'.format(dataset.set_name), 'w'), indent=4)
