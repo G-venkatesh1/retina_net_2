@@ -282,22 +282,17 @@ class ResNet(nn.Module):
                 anchors_nms_idx = nms(anchorBoxes, scores, 0.5)
 
                 finalResult[0].extend(scores[anchors_nms_idx])
-                # val = [i] * anchors_nms_idx.shape[0]
-                # tensor1 = torch.full((1,), val[0])
-                # print(scores[anchors_nms_idx],(anchors_nms_idx))
-                # val = torch.tensor(anchors_nms_idx)
-                # print(val)
-                finalResult[1].extend(i*anchors_nms_idx)
+                finalResult[1].extend(torch.tensor([i] * anchors_nms_idx.shape[0]))
                 finalResult[2].extend(anchorBoxes[anchors_nms_idx])
+
                 
-                finalAnchorBoxesIndexesValue =i*anchors_nms_idx
+                finalAnchorBoxesIndexesValue = torch.tensor([i] * anchors_nms_idx.shape[0])
                 # if torch.cuda.is_available():
                 #     finalAnchorBoxesIndexesValue = finalAnchorBoxesIndexesValue.cuda()
 
                 finalAnchorBoxesIndexes = torch.cat((finalAnchorBoxesIndexes, finalAnchorBoxesIndexesValue)).cuda()
                 finalAnchorBoxesCoordinates = torch.cat((finalAnchorBoxesCoordinates, anchorBoxes[anchors_nms_idx])).cuda()
                 finalScores = torch.cat((finalScores, scores[anchors_nms_idx])).cuda()
-
             return [finalScores, finalAnchorBoxesIndexes, finalAnchorBoxesCoordinates]
 
 
