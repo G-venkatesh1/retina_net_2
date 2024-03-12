@@ -232,10 +232,8 @@ class ResNet(nn.Module):
 
         if self.training:
             img_batch, annotations = inputs
-            print("im here intrain")
         else:
             img_batch = inputs
-            print("im here anchor")
 
         x = self.conv1(img_batch)
         x = self.bn1(x)
@@ -256,7 +254,6 @@ class ResNet(nn.Module):
         anchors = self.anchors(img_batch)
 
         if self.training:
-            print("IM IN TRAINING")
             return self.focalLoss(classification, regression, anchors, annotations)
         else:
             print("im in anchor")
@@ -303,6 +300,7 @@ class ResNet(nn.Module):
 
                 finalAnchorBoxesIndexes = torch.cat((finalAnchorBoxesIndexes, finalAnchorBoxesIndexesValue)).cuda()
                 finalAnchorBoxesCoordinates = torch.cat((finalAnchorBoxesCoordinates, anchorBoxes[anchors_nms_idx])).cuda()
+                print("values in mode.py",finalScores,finalAnchorBoxesIndexes, finalAnchorBoxesCoordinates)
                 finalScores = torch.cat((finalScores, scores[anchors_nms_idx])).cuda()
         return [finalScores, finalAnchorBoxesIndexes, finalAnchorBoxesCoordinates]
 
