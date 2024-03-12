@@ -258,6 +258,7 @@ class ResNet(nn.Module):
         else:
             transformed_anchors = self.regressBoxes(anchors, regression)
             transformed_anchors = self.clipBoxes(transformed_anchors, img_batch)
+            print(transformed_anchors)
             return [transformed_anchors,classification]
         #     finalResult = [[], [], []]
         #     finalScores = torch.Tensor([])
