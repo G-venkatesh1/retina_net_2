@@ -232,8 +232,10 @@ class ResNet(nn.Module):
 
         if self.training:
             img_batch, annotations = inputs
+            print("im here intrain")
         else:
             img_batch = inputs
+            print("im here anchor")
 
         x = self.conv1(img_batch)
         x = self.bn1(x)
