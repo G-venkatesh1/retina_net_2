@@ -375,7 +375,7 @@ class Resizer(object):
 
 class Resizer_const(object):
     """Convert ndarrays in sample to Tensors."""
-    def __call__(self, sample,target_size=1024):
+    def __call__(self, sample,target_size=640):
         image, annots = sample['img'], sample['annot']
 
         rows, cols, cns = image.shape
