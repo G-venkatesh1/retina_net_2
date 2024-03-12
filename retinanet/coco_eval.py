@@ -16,6 +16,7 @@ def evaluate_coco(dataset, model, threshold=0.05):
             c=c+1
             if torch.cuda.is_available():
                 transformed_anchors,classification = model(data['img'].permute(2, 0, 1).cuda().float().unsqueeze(dim=0))
+                print("in eval",transformed_anchors.shape,classification.shape)
                 transformed_anchors=transformed_anchors.cpu()
                 classification=classification.cpu()
                 finalResult = [[], [], []]
