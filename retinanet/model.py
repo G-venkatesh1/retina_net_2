@@ -284,7 +284,7 @@ class ResNet(nn.Module):
                 finalResult[0].extend(scores[anchors_nms_idx])
                 # val = [i] * anchors_nms_idx.shape[0]
                 # tensor1 = torch.full((1,), val[0])
-                print(scores[anchors_nms_idx],(anchors_nms_idx))
+                # print(scores[anchors_nms_idx],(anchors_nms_idx))
                 # val = torch.tensor(anchors_nms_idx)
                 # print(val)
                 finalResult[1].extend(i*anchors_nms_idx)
