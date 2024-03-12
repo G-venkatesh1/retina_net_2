@@ -284,13 +284,13 @@ class ResNet(nn.Module):
                 finalResult[0].extend(scores[anchors_nms_idx])
                 finalResult[1].extend([i] * anchors_nms_idx.shape[0])
                 finalResult[2].extend(anchorBoxes[anchors_nms_idx])
-                finalScores = torch.cat((finalScores, scores[anchors_nms_idx]))
+                finalScores = torch.cat((finalScores, scores[anchors_nms_idx])).cuda()
                 finalAnchorBoxesIndexesValue = [i] * anchors_nms_idx.shape[0]
-                if torch.cuda.is_available():
-                    finalAnchorBoxesIndexesValue = finalAnchorBoxesIndexesValue.cuda()
+                # if torch.cuda.is_available():
+                #     finalAnchorBoxesIndexesValue = finalAnchorBoxesIndexesValue.cuda()
 
-                finalAnchorBoxesIndexes = torch.cat((finalAnchorBoxesIndexes, finalAnchorBoxesIndexesValue))
-                finalAnchorBoxesCoordinates = torch.cat((finalAnchorBoxesCoordinates, anchorBoxes[anchors_nms_idx]))
+                finalAnchorBoxesIndexes = torch.cat((finalAnchorBoxesIndexes, finalAnchorBoxesIndexesValue)).cuda()
+                finalAnchorBoxesCoordinates = torch.cat((finalAnchorBoxesCoordinates, anchorBoxes[anchors_nms_idx])).cuda()
  
 
             return [finalScores, finalAnchorBoxesIndexes, finalAnchorBoxesCoordinates]
